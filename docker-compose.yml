@@ -1,0 +1,62 @@
+version: '3'
+services:
+    app:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image: gdd/laravel
+        container_name: myapp
+        tty: true
+        environment:
+            SERVICE_NAME: myapp
+            SERVICE_TAGS: dev
+        working_dir: /var/www/html
+        volumes:
+            - ./:/var/www/html
+        networks:
+            - mynet
+
+    nginx:
+        container_name: lara-nginx
+        image: nginx:alpine
+        working_dir: /var/www/html
+        tty: true
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./:/var/www/html
+            - ./nginx:/etc/nginx/conf.d
+        networks:
+            - mynet
+
+    db:
+        image: mysql
+        tty: true
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: accountant
+            MYSQL_ROOT_PASSWORD: secret
+        volumes:
+            - mysql:/var/lib/mysql
+        networks:
+            - mynet
+
+    redis:
+        image: redis
+        command: redis-server --appendonly yes --replica-read-only no
+        tty: true
+        ports:
+            - "6379:6379"
+        networks:
+            - mynet
+
+#Docker Networks
+networks:
+    mynet:
+        driver: bridge
+#Volumes
+volumes:
+    mysql:
+        driver: local
