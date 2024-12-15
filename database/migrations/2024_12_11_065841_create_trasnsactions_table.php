@@ -21,6 +21,7 @@ return new class extends Migration
                 ->onUpdate('no action');
             $table->index('author_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
