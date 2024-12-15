@@ -11,8 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('trasnsactions', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->integer('amount');
+            $table->foreignId('author_id')
+                ->constrained('users')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+            $table->index('author_id');
             $table->timestamps();
         });
     }
