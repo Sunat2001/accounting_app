@@ -1,0 +1,419 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Test-task-api Documentation",
+        "description": "Test task",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api/v1",
+            "description": "API protocol v2"
+        }
+    ],
+    "paths": {
+        "transaction": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "List all transactions with filters",
+                "operationId": "eaf808ebb81cdd3e26c810fec34608c0",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/size"
+                    },
+                    {
+                        "$ref": "#/components/parameters/page"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sort"
+                    },
+                    {
+                        "$ref": "#/components/parameters/amount_filter"
+                    },
+                    {
+                        "$ref": "#/components/parameters/amount_filter_type"
+                    },
+                    {
+                        "$ref": "#/components/parameters/date_filter"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Transaction"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "page": {
+                                                    "description": "Номер страницы с данными",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "size": {
+                                                    "description": "Размер страницы с данными",
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "sort": {
+                                                    "description": "Сортировка данных по нескольким полям",
+                                                    "type": "object",
+                                                    "additionalProperties": {
+                                                        "type": "enum",
+                                                        "enum": [
+                                                            "asc",
+                                                            "desc"
+                                                        ]
+                                                    }
+                                                },
+                                                "total": {
+                                                    "description": "Общее количество",
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Create new transaction",
+                "operationId": "356bd6faa4f0e9792f2e41f26494b1ac",
+                "requestBody": {
+                    "description": "Create new transaction body",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "amount"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Transaction title",
+                                        "type": "string",
+                                        "example": "Transaction title"
+                                    },
+                                    "amount": {
+                                        "description": "Transaction amount",
+                                        "type": "number",
+                                        "example": "24"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/TransactionSuccessResponse"
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/UnprocessableEntityResponse"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerErrorResponse"
+                    }
+                }
+            }
+        },
+        "transaction/{transactionId}": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get transactions by id",
+                "operationId": "64cce4c0022e37b38610332d636698a2",
+                "parameters": [
+                    {
+                        "name": "transactionId",
+                        "in": "path",
+                        "description": "ID of the transaction to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/TransactionSuccessResponse"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/ServerErrorResponse"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Delete transaction by id",
+                "operationId": "ba0fde9d980015560d3a3a1a188e3242",
+                "parameters": [
+                    {
+                        "name": "transactionId",
+                        "in": "path",
+                        "description": "ID of the transaction to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Transaction": {
+                "description": "Transactions",
+                "required": [
+                    "title",
+                    "amount",
+                    "created_at"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "amount": {
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "responses": {
+            "ServerErrorResponse": {
+                "description": "SERVER_ERROR",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "title",
+                                "details"
+                            ],
+                            "properties": {
+                                "title": {
+                                    "description": "Код ошибки",
+                                    "type": "string"
+                                },
+                                "details": {
+                                    "description": "Детали ошибки",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "UnauthorizedResponse": {
+                "description": "UNAUTHORIZED",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "title",
+                                "details"
+                            ],
+                            "properties": {
+                                "title": {
+                                    "description": "Код ошибки",
+                                    "type": "string"
+                                },
+                                "details": {
+                                    "description": "Детали ошибки",
+                                    "type": "string"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "UnprocessableEntityResponse": {
+                "description": "UNPROCESSABLE_ENTITY",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "title",
+                                "details",
+                                "errors"
+                            ],
+                            "properties": {
+                                "title": {
+                                    "description": "Код ошибки",
+                                    "type": "string"
+                                },
+                                "details": {
+                                    "description": "Детали ошибки",
+                                    "type": "string"
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "example": {
+                                        "parameter1": [
+                                            "The parameter1 is required.",
+                                            "The parameter1 must be a number."
+                                        ],
+                                        "parameter2": [
+                                            "The parameter2 must be a number."
+                                        ]
+                                    },
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "TransactionSuccessResponse": {
+                "description": "OK",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "required": [
+                                "data"
+                            ],
+                            "properties": {
+                                "data": {
+                                    "$ref": "#/components/schemas/Transaction"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "size": {
+                "name": "size",
+                "in": "query",
+                "description": "Сортировка данных по нескольким полям",
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            "page": {
+                "name": "page",
+                "in": "query",
+                "description": "Номер страницы с данными",
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            "sort": {
+                "name": "sort",
+                "in": "query",
+                "description": "Сортировка данных по нескольким полям",
+                "required": false,
+                "style": "deepObject",
+                "explode": true,
+                "schema": {
+                    "properties": {
+                        "id": {
+                            "type": "enum",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    "type": "object"
+                }
+            },
+            "amount_filter": {
+                "name": "amount_filter",
+                "in": "query",
+                "description": "Фильтр по сумме",
+                "schema": {
+                    "type": "integer"
+                }
+            },
+            "amount_filter_type": {
+                "name": "amount_filter_type",
+                "in": "query",
+                "description": "Тип фильтра по сумме",
+                "schema": {
+                    "type": "enum",
+                    "enum": [
+                        "=",
+                        ">",
+                        "<",
+                        "<="
+                    ]
+                }
+            },
+            "date_filter": {
+                "name": "date_filter",
+                "in": "query",
+                "description": "Фильтр по дате",
+                "schema": {
+                    "type": "datetime",
+                    "example": "2024-03-20 12:33:40"
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "Authorization",
+                "in": "header",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Transactions",
+            "description": "Transactions group api"
+        }
+    ]
+}
